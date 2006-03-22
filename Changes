@@ -1,5 +1,13 @@
 Revision history for Object-Enum
 
+0.03    Wed Mar 22 18:52:44 EST 2006
+
+        Bump version number to make CPAN happy
+
+0.02    Wed Mar 22 00:25:43 EST 2006
+
+        Adding missing dep for Sub::Install
+
 0.01    Tue Mar 21 23:22:07 EST 2006
 
         First version, released on an unsuspecting world.
