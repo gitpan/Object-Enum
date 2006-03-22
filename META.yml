@@ -14,6 +14,5 @@ requires:
   Class::Accessor::Fast: 0
   Class::Data::Inheritable: 0
   Sub::Exporter: 0
-  Sub::Install: 0
   perl: 5.6.1
-version: 0.02
+version: 0.01

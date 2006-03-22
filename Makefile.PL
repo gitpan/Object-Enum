@@ -8,7 +8,6 @@ all_from;
 
 build_requires 'Test::More' => 0;
 
-requires 'Sub::Install'             => 0;
 requires 'Sub::Exporter'            => 0;
 requires 'Class::Data::Inheritable' => 0;
 requires 'Class::Accessor::Fast'    => 0;
