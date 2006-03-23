@@ -30,13 +30,13 @@ use overload (
 );
 
 use Sub::Exporter -setup => {
-  exports => [
-    Enum => sub { 
-      my $class = shift;
-      sub { $class->new(@_) }
-    },
-  ],
+  exports => [ Enum => \&_build_enum ],
 };
+
+sub _build_enum { 
+  my ($class, undef, $arg) = @_;
+  return sub { $class->new({ %$arg, %{shift || {} } }) };
+}
 
 =head1 NAME
 
@@ -44,11 +44,11 @@ Object::Enum - replacement for C<< if ($foo eq 'bar') >>
 
 =head1 VERSION
 
-Version 0.03
+Version 0.04
 
 =cut
 
-our $VERSION = '0.03';
+our $VERSION = '0.04';
 
 =head1 SYNOPSIS
 
@@ -135,7 +135,7 @@ sub new {
     $arg = { values => $arg };
   }
 
-  unless (@{$arg->{values}}) {
+  unless (@{$arg->{values} || []}) {
     Carp::croak("at least one possible value must be provided");
   }
 

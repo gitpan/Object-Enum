@@ -1,5 +1,9 @@
 Revision history for Object-Enum
 
+0.04    Thu Mar 23 11:55:20 EST 2006
+
+        Make 'Enum' export curry-happy
+
 0.03    Wed Mar 22 18:52:44 EST 2006
 
         Bump version number to make CPAN happy
