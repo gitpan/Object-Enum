@@ -44,11 +44,11 @@ Object::Enum - replacement for C<< if ($foo eq 'bar') >>
 
 =head1 VERSION
 
-Version 0.04
+Version 0.05
 
 =cut
 
-our $VERSION = '0.04';
+our $VERSION = '0.05';
 
 =head1 SYNOPSIS
 
@@ -119,7 +119,7 @@ sub _mk_values {
   for my $value (keys %{ $class->_values }) {
     Sub::Install::install_sub({
       as   => "set_$value",
-      code => sub { shift->value($value) },
+      code => sub { $_[0]->value($value); return $_[0] },
     });
     Sub::Install::install_sub({
       as   => "is_$value",
@@ -237,6 +237,13 @@ Automatically generated from the values passed into C<< new
 >>.
 
 None of these methods take any arguments.
+
+The C<< set_* >> methods are chainable; that is, they return
+the object on which they were called.  This lets you do useful things like:
+
+  use Object::Enum Enum => { -as => 'color', values => [qw(red blue)] };
+
+  print color->set_red->value; # prints 'red'
 
 =cut
 
