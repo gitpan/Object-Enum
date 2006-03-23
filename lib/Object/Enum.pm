@@ -44,11 +44,11 @@ Object::Enum - replacement for C<< if ($foo eq 'bar') >>
 
 =head1 VERSION
 
-Version 0.05
+Version 0.06
 
 =cut
 
-our $VERSION = '0.05';
+our $VERSION = '0.06';
 
 =head1 SYNOPSIS
 
@@ -118,10 +118,12 @@ sub _mk_values {
   my $class = shift;
   for my $value (keys %{ $class->_values }) {
     Sub::Install::install_sub({
+      into => $class,
       as   => "set_$value",
       code => sub { $_[0]->value($value); return $_[0] },
     });
     Sub::Install::install_sub({
+      into => $class,
       as   => "is_$value",
       code => sub { (shift->value || '') eq $value },
     });

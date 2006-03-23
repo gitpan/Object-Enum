@@ -1,5 +1,9 @@
 Revision history for Object-Enum
 
+0.06    Thu Mar 23 13:07:18 EST 2006
+
+        Fix 'redefine' warnings for is_*/set_*
+
 0.05    Thu Mar 23 12:08:43 EST 2006
 
         Make set_* methods chainable
