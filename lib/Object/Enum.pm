@@ -44,11 +44,11 @@ Object::Enum - replacement for C<< if ($foo eq 'bar') >>
 
 =head1 VERSION
 
-Version 0.06
+Version 0.070
 
 =cut
 
-our $VERSION = '0.06';
+our $VERSION = '0.070';
 
 =head1 SYNOPSIS
 

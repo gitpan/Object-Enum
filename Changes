@@ -1,5 +1,9 @@
 Revision history for Object-Enum
 
+0.070   Mon Aug 28 17:35:56 EDT 2006
+
+        Freshen Module::Install
+
 0.06    Thu Mar 23 13:07:18 EST 2006
 
         Fix 'redefine' warnings for is_*/set_*
