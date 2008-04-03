@@ -1,5 +1,14 @@
 Revision history for Object-Enum
 
+0.072   2008-04-03 hdp
+
+        fix RT#27281
+
+0.071   2007-06-28 hdp
+
+        rename 'spawn' to 'clone', add optional value argument
+        avoid warning on setting to undef (from RJBS)
+
 0.070   Mon Aug 28 17:35:56 EDT 2006
 
         Freshen Module::Install

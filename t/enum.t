@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 10;
+use Test::More tests => 16;
 
 BEGIN { use_ok("Object::Enum") }
 
@@ -43,4 +43,26 @@ Object::Enum->import(Enum => {
   -as => 'color',
 });
 
-is(color()->value, 'red', "curried default");
+is(color(), 'red', "curried default");
+
+is(color()->clone, 'red', "curried cloned default");
+
+is(color()->clone('blue'), 'blue', 'cloned passed-in value');
+
+$e = Enum({
+  values => [qw(1 2)],
+});
+
+is $e->value, undef, "default is unset";
+is $e->clone->value, undef, "cloned undef";
+
+$e = Enum({
+  values => [qw(1 2)],
+  default => 1,
+  unset => 0,
+});
+
+ok_eval_fail { $e->unset }
+  no_unset => qr/object .+? cannot be unset/;
+ok_eval_fail { $e->clone->unset }
+  clone_no_unset => qr/object .+? cannot be unset/;

@@ -44,11 +44,11 @@ Object::Enum - replacement for C<< if ($foo eq 'bar') >>
 
 =head1 VERSION
 
-Version 0.070
+Version 0.072
 
 =cut
 
-our $VERSION = '0.070';
+our $VERSION = '0.072';
 
 =head1 SYNOPSIS
 
@@ -173,24 +173,39 @@ sub _stringify {
 
 =head2 spawn
 
-  my $new = $obj->spawn;
+=head2 clone
 
-Create a new Enum from an existing object, using the same
-arguments as were originally passed to C<< new >> when that
-object was created.
+  my $new = $obj->clone;
+
+  my $new = $obj->clone($value);
+
+Create a new Enum from an existing object, using the same arguments as were
+originally passed to C<< new >> when that object was created.
+
+An optional value may be passed in; this is identical to (but more convenient
+than) calling C<value> with the same argument on the newly cloned object.
+
+This method was formerly named C<spawn>.  That name will still work but is
+deprecated.
 
 =cut
 
-sub spawn {
+sub clone {
   my $class = shift;
-  return bless {
+  my $self = bless {
     value => $class->_default,
-  } => $class;
+  } => ref($class) || $class;
+  $self->value(@_) if @_;
+  return $self;
 }
+
+BEGIN { *spawn = \&clone }
 
 =head2 value
 
 The current value as a string (or undef)
+
+Note: don't pass in undef; use the L<unset|/unset> method instead.
 
 =cut
 
@@ -198,6 +213,7 @@ sub value {
   my $self = shift;
   if (@_) {
     my $val = shift;
+    Carp::croak("object $self cannot be set to undef") unless defined $val;
     unless ($self->_values->{$val}) {
       Carp::croak("object $self cannot be set to '$val'");
     }
@@ -225,10 +241,10 @@ Unset the object's value (set to undef)
 
 sub unset {
   my $self = shift;
-  if (@_ && !$self->_unset) {
+  unless ($self->_unset) {
     Carp::croak("object $self cannot be unset");
   }
-  $self->value(undef);
+  $self->_value_accessor(undef);
 }
 
 =head2 is_*
