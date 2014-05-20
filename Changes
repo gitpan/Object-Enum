@@ -1,5 +1,11 @@
 Revision history for Object-Enum
 
+0.073   2014-05-19
+
+        Convert to Dist::Zilla
+        Add Travis CI
+        Add basic interface tests
+
 0.072   2008-04-03 hdp
 
         fix RT#27281
