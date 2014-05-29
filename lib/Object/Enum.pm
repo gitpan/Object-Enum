@@ -1,5 +1,5 @@
 package Object::Enum;
-$Object::Enum::VERSION = '0.073';
+$Object::Enum::VERSION = '0.074';
 use strict;
 use warnings;
 use 5.006001;
@@ -16,6 +16,7 @@ __PACKAGE__->mk_classdata($_) for (
   '_values',
   '_unset',
   '_default',
+  '_readonly',
 );
 
 __PACKAGE__->mk_accessors(
@@ -93,6 +94,11 @@ this object's default value is (defaults to undef)
 an arrayref, listing the object's possible values (at least
 one required)
 
+=item * readonly
+
+boolean value to indicate if the object is read-only. If set
+to read-only the objects C<value> and C<set_*> methods become ineffectual.
+
 =back
 
 =cut
@@ -118,7 +124,7 @@ sub _mk_values {
       into => $class,
       as   => "is_$value",
       code => sub { (shift->value || '') eq $value },
-    });
+    }) unless $class->can("is_$value");
   }
 }
 
@@ -135,6 +141,7 @@ sub new {
 
   exists $arg->{unset}   or $arg->{unset} = 1;
   exists $arg->{default} or $arg->{default} = undef;
+  exists $arg->{readonly} or $arg->{readonly} = 0;
 
   if (!$arg->{unset} && !defined $arg->{default}) {
     Carp::croak("must supply a defined default for 'unset' to be false");
@@ -149,10 +156,13 @@ sub new {
   my $gen = $class->_generate_class;
   $gen->_unset($arg->{unset});
   $gen->_default($arg->{default});
+  $gen->_readonly($arg->{readonly});
   $gen->_values({ map { $_ => 1 } @{$arg->{values}} });
   $gen->_mk_values;
 
-  return $gen->spawn;
+  # constructors shouldn't call cloners
+  #return $gen->spawn;
+  return $gen->_curried;
 }
 
 sub _stringify {
@@ -182,16 +192,54 @@ deprecated.
 
 =cut
 
-sub clone {
+sub _curried {
   my $class = shift;
   my $self = bless {
-    value => $class->_default,
+    value => ref($class)? $class->value : $class->_default,
   } => ref($class) || $class;
   $self->value(@_) if @_;
+
+  return $self;
+}
+
+sub clone {
+  my $self = shift->_curried(@_);
+  $self->_readonly(0)
+    if $self->_readonly;
+
   return $self;
 }
 
 BEGIN { *spawn = \&clone }
+
+=head2 readonly
+
+ my $obj = $obj->readonly(\@values, $value)
+
+Creates a read-only enum object, also known as immutable. When enum objects are created
+with this C<< set_* >> methods, and the C<value> method will become ineffectual.
+
+If you want a mutable version, simply clone the immutable version
+
+ my $new_obj = $readonly_obj->clone;
+ $new_obj->set_red;
+
+=cut
+
+sub readonly {
+  my $class = shift;
+  my $values = shift;
+  my $value = shift;
+
+  $values = []
+    unless ref($values) eq 'ARRAY';
+
+  return $class->new({
+    values => $values,
+    default => $value,
+    readonly => 1
+  });
+}
 
 =head2 value
 
@@ -203,7 +251,7 @@ Note: don't pass in undef; use the L<unset|/unset> method instead.
 
 sub value {
   my $self = shift;
-  if (@_) {
+  if (@_ && !$self->_readonly) {
     my $val = shift;
     Carp::croak("object $self cannot be set to undef") unless defined $val;
     unless ($self->_values->{$val}) {

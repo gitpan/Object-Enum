@@ -18,4 +18,4 @@ requires:
   Class::Data::Inheritable: 0
   Sub::Exporter: 0
   Sub::Install: 0
-version: 0.073
+version: 0.074

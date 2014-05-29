@@ -2,7 +2,7 @@
 
 use strict;
 use warnings;
-
+use Scalar::Util 'refaddr';
 use Test::More;
 
 use_ok 'Object::Enum';
@@ -26,12 +26,10 @@ eq_array  [$obj->value], [qw[red green blue]];
 ok !$obj->unset;
 
 ok $obj->set_red;
-
 my $new_obj = $obj->clone();
-
-isnt $obj, $new_obj;
+ok refaddr($obj) != refaddr($new_obj); # strange that I have to refaddr() these
 ok $obj->set_blue;
 ok $obj->is_blue;
-#ok $new_obj->is_red;
+ok $new_obj->is_red;
 
 done_testing();
